@@ -28,52 +28,7 @@ library(tidyr, quietly = T)
 library(stringr, quietly = T)
 library(optparse, quietly = T)
 
-
-# Collect and use CL arguments ####
-# Get command line arguments with optparse
-option_list = list(
-  make_option(c("-f", "--file"), 
-              type="character", 
-              default=NULL, 
-              help='dataset file name or quoted comma separated names: eg. "file1,file2,file3"', 
-              metavar="character"),
-  make_option(c("-d", "--dir"), 
-              type="character", 
-              default=NULL, 
-              help="directory location of json files", 
-              metavar="character"),
-  make_option(c("-v", "--version"), 
-              type="character", 
-              default="", 
-              help="Mykrobe Workflow Version", 
-              metavar="character"),
-  make_option(c("-D", "--depth"), 
-              type="integer", 
-              default=5, 
-              help="Minimum depth of coverage [default= %default]", 
-              metavar="integer"),
-  make_option(c("-c", "--conf"), 
-              type="integer", 
-              default=10, 
-              help="Minimum genotype confidence for variant genotyping [default= %default]", 
-              metavar="integer"),
-  make_option(c("-n", "--name"), 
-              type="character", 
-              default="", 
-              help="Name of the run", 
-              metavar="character")
-)
-
-opt_parser = OptionParser(option_list=option_list)
-opt = parse_args(opt_parser)
-
-if (is.null(opt$file) & is.null(opt$dir)){
-  print_help(opt_parser)
-  stop("At least one argument must be supplied to input file or directory", call.=FALSE)
-}
-
-
-# Define custom functions, variables, and paths. ####
+# Define custom functions, variables, and paths. Collect and use CL arguments ####
 
 # Here's a function to recreate that output table from the input JSON files
 
@@ -143,9 +98,59 @@ getResults <- function(listelement){
   as_tibble(temp)
 }
 
+sink(stdout(), type = "message")
 
+suppressPackageStartupMessages({
+  library(jsonlite)
+  library(here)
+  library(dplyr)
+  library(purrr)
+  library(tidyr)
+  library(stringr)
+  library(optparse)
+})
 
+# Get command line arguments with optparse
+option_list = list(
+  make_option(c("-f", "--file"), 
+              type="character", 
+              default=NULL, 
+              help='dataset file name or quoted comma separated names: eg. "file1,file2,file3"', 
+              metavar="character"),
+  make_option(c("-d", "--dir"), 
+              type="character", 
+              default=NULL, 
+              help="directory location of json files", 
+              metavar="character"),
+  make_option(c("-v", "--version"), 
+              type="character", 
+              default="", 
+              help="Mykrobe Workflow Version", 
+              metavar="character"),
+  make_option(c("-D", "--depth"), 
+              type="integer", 
+              default=5, 
+              help="Minimum depth of coverage [default= %default]", 
+              metavar="integer"),
+  make_option(c("-c", "--conf"), 
+              type="integer", 
+              default=10, 
+              help="Minimum genotype confidence for variant genotyping [default= %default]", 
+              metavar="integer"),
+  make_option(c("-n", "--name"), 
+              type="character", 
+              default="", 
+              help="Name of the run", 
+              metavar="character")
+)
 
+opt_parser = OptionParser(option_list=option_list)
+opt = parse_args(opt_parser)
+
+if (is.null(opt$file) & is.null(opt$dir)){
+  print_help(opt_parser)
+  stop("At least one argument must be supplied to input file or directory", call.=FALSE)
+}
 
 # Parameters to take from Galaxy/CL as args or however works best
 params <- c("",  # Lims_Comment 
@@ -231,6 +236,7 @@ all_drugs <- c("Isoniazid",
                "Kanamycin")
 
 # Do Stuff ####
+
 # Import all the JSON files into a list of lists format ####
 
 if (is.null(opt$file)){
@@ -347,7 +353,7 @@ report <-
 # Write some output
 # Report as is
 write.csv(report, "output-report.csv", row.names = F)
-message("Writing Susceptibility report to CSV as output-report.csv")
+print("Writing Susceptibility report to CSV as output-report.csv")
 
 # Select specific columns from temp and output them
 temp %>% 
@@ -363,4 +369,7 @@ temp %>%
          lineage_depth) %>%
   distinct() %>%
   write.csv("output-jsondata.csv", row.names = F)
-message("Writing JSON data to CSV as output-jsondata.txt")
+print("Writing JSON data to CSV as output-jsondata.txt")
+sink(NULL, type="message") # close the sink
+
+quit()
