@@ -68,14 +68,14 @@ mutate_at(report, vars(starts_with("Mykrobe_")), funs(replace(., is.na(.), "No M
 option_list <- list(
   make_option(c("-f", "--file"), 
               type="character", 
-              default=NULL,
-              #default="data/mykrobe-test-data/", 
+              #default=NULL,
+              default="data/json_test_files_sens/1800960__78807.json" #,data/json_test_files_sens/1800967__78809.json", 
               help="dataset file name or comma separated names: eg. file1,file2,file3", 
               metavar="character"),
   make_option(c("-d", "--dir"), 
               type="character", 
-              #default=NULL,
-              default="data/mykrobe-test-data/",
+              default=NULL,
+              #default="data/json_test_files_sens/1800960__78807.json",
               help="directory of json files", 
               metavar="character"),
   make_option(c("-v", "--version"), 
@@ -109,3 +109,5 @@ variants.temp %>%
   group_by(file, columnname) %>% 
   summarise(mutation = paste(mutation, collapse = ";")) %>% # Easy peasy 
   spread(columnname, mutation)
+
+# Pull the list of columns
