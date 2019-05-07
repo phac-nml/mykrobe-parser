@@ -45,7 +45,7 @@ getResults <- function(listelement){
   if("Non_tuberculosis_mycobacterium_complex" %in% phylo_group){
     warning(paste("Non-tuberculosis mycobacteria detected in file ", names(listelement), ". Skipping.", sep = ""))
     return()}
-    
+  
   # Start building a list of all your various elements
   temp <- list(mykrobe_version = listelement[[1]][["version"]][["mykrobe-predictor"]],
                file = names(listelement), # One element
@@ -82,12 +82,12 @@ getResults <- function(listelement){
   }
   
   mapped.variants <- map(listelement[[1]][["susceptibility"]], # Dig into the lists, pull out variants and collapse into chr vector
-                       ~ imap(.x[["called_by"]],  # imap is shorthand for map2(x, names(x), ...), calling .y gets you the name / index of the current element
-                              ~ paste(.y, 
-                                      .x[["info"]][["coverage"]][["alternate"]][["median_depth"]],
-                                      .x[["info"]][["coverage"]][["reference"]][["median_depth"]],
-                                      .x[["info"]][["conf"]],
-                                      sep = ":"))) %>% 
+                         ~ imap(.x[["called_by"]],  # imap is shorthand for map2(x, names(x), ...), calling .y gets you the name / index of the current element
+                                ~ paste(.y, 
+                                        .x[["info"]][["coverage"]][["alternate"]][["median_depth"]],
+                                        .x[["info"]][["coverage"]][["reference"]][["median_depth"]],
+                                        .x[["info"]][["conf"]],
+                                        sep = ":"))) %>% 
     map_chr(~ paste(.x, collapse = "__"))
   
   if(length(mapped.variants) != 0){
@@ -152,7 +152,7 @@ params <- c("",  # Lims_Comment
             opt$depth,  # Mykrobe_min_depth_default_5
             opt$conf,  # Mykrobe_min_conf_default_10
             "",                             # LIMS_file - empty as it's an upload field in LIMS
-            opt$name)  # LIMS_filename
+            opt$name)  # Mutation_set_version
 
 names(params) <- c("Lims_Comment", 
                    "Lims_INTComment",
@@ -160,7 +160,7 @@ names(params) <- c("Lims_Comment",
                    "Mykrobe_min_depth_default_5",
                    "Mykrobe_min_conf_default_10", 
                    "LIMS_file", 
-                   "LIMS_filename")
+                   "Mutation_set_version")
 
 
 # A default report in the order our LIMS requires
@@ -185,9 +185,12 @@ columns <- c("file",
              "Mykrobe_rpsA",
              "Pyrazinamide_R_mutations",
              "Pyrazinamide_Prediction",
-             "Mykrobe_gyrA",
-             "Quinolones_R_mutations",
-             "Quinolones_Prediction",
+             "Mykrobe_Ofloxacin_gyrA",
+             "Ofloxacin_R_mutations",
+             "Ofloxacin_Prediction",
+             "Mykrobe_Moxifloxacin_gyrA",
+             "Moxifloxacin_R_mutations",
+             "Moxifloxacin_Prediction",
              "Mykrobe_rpsL",
              "Mykrobe_Streptomycin_rrs",
              "Mykrobe_Streptomycin_gid",
@@ -212,7 +215,7 @@ columns <- c("file",
              "Mykrobe_min_depth_default_5",
              "Mykrobe_min_conf_default_10",
              "LIMS_file",
-             "LIMS_filename")
+             "Mutation_set_version")
 
 report <- setNames(data.frame(matrix("", ncol = length(columns), nrow = 1), stringsAsFactors = F), columns)
 
@@ -222,7 +225,8 @@ all_drugs <- c("Isoniazid",
                "Rifampicin", 
                "Ethambutol", 
                "Pyrazinamide", 
-               "Moxifloxacin_Ofloxacin", 
+               "Moxifloxacin",
+               "Ofloxacin", 
                "Streptomycin",
                "Amikacin",
                "Capreomycin",
@@ -273,43 +277,43 @@ if (0 < predictions.table %>%
     unlist(use.names = F) %>% 
     str_count("[R,r]") %>% 
     sum()){
-
-      # Multiple resistance mutations and confidence per drug in the X_R_mutations column
-      # Actual protein changes in Mykrobe_X columns
-      
-      variants.temp <- 
-        temp %>% 
-        select(file, drug, variants = `variants (gene:alt_depth:wt_depth:conf)`) %>% 
-        mutate(variants = replace(variants, variants == "", NA)) %>% # Make missing data consistent...
-        filter(!is.na(variants)) %>% # ...Then get rid of it
-        mutate(tempcols = paste(drug, "R_mutations", sep = "_")) %>% 
-        mutate(R_mutations = variants) %>% 
-        mutate(variants = strsplit(variants, "__")) %>% # Split the mutations across rows (list first then split across rows)
-        unnest(variants) %>% 
-        separate(variants, c("gene", "mutation"), "_") %>% 
-        mutate(columnname = ifelse(gene %in% c("tlyA", "rrs", "gid"), # Check for columns that include the drug name or not and paste accordingly
-                                   paste("Mykrobe", drug, gene, sep = "_"),
-                                   paste("Mykrobe", gene, sep = "_"))) %>% 
-        # Extract out the mutation information with a regex that covers all potential genes
-        # This regex looks for whatever is ahead of the first colon and after the last hyphen
-        mutate(mutation = str_match(mutation, "(.*)-.*:")[,2]) %>%
-        select(file, tempcols, R_mutations, columnname, mutation)
-      
-      # Split each kind of variants into its own temp table then merge
-      variants.1 <- 
-        variants.temp %>% 
-        select(file, tempcols, R_mutations) %>% 
-        distinct() %>% 
-        spread(tempcols, R_mutations)
-      
-      variants.2 <- 
-        variants.temp %>% 
-        select(file, columnname, mutation) %>% 
-        group_by(file, columnname) %>% 
-        summarise(mutation = paste(mutation, collapse = ";")) %>% 
-        spread(columnname, mutation)
-      
-      variants.table <- full_join(variants.1, variants.2, by = "file")
+  
+  # Multiple resistance mutations and confidence per drug in the X_R_mutations column
+  # Actual protein changes in Mykrobe_X columns
+  
+  variants.temp <- 
+    temp %>% 
+    select(file, drug, variants = `variants (gene:alt_depth:wt_depth:conf)`) %>% 
+    mutate(variants = replace(variants, variants == "", NA)) %>% # Make missing data consistent...
+    filter(!is.na(variants)) %>% # ...Then get rid of it
+    mutate(tempcols = paste(drug, "R_mutations", sep = "_")) %>% 
+    mutate(R_mutations = variants) %>% 
+    mutate(variants = strsplit(variants, "__")) %>% # Split the mutations across rows (list first then split across rows)
+    unnest(variants) %>% 
+    separate(variants, c("gene", "mutation"), "_") %>% 
+    mutate(columnname = ifelse(gene %in% c("gyrA", "tlyA", "rrs", "eis", "gid"), # Check for columns that include the drug name or not and paste accordingly
+                               paste("Mykrobe", drug, gene, sep = "_"),
+                               paste("Mykrobe", gene, sep = "_"))) %>% 
+    # Extract out the mutation information with a regex that covers all potential genes
+    # This regex looks for whatever is ahead of the first colon and after the last hyphen
+    mutate(mutation = str_match(mutation, "(.*)-.*:")[,2]) %>%
+    select(file, tempcols, R_mutations, columnname, mutation)
+  
+  # Split each kind of variants into its own temp table then merge
+  variants.1 <- 
+    variants.temp %>% 
+    select(file, tempcols, R_mutations) %>% 
+    distinct() %>% 
+    spread(tempcols, R_mutations)
+  
+  variants.2 <- 
+    variants.temp %>% 
+    select(file, columnname, mutation) %>% 
+    group_by(file, columnname) %>% 
+    summarise(mutation = paste(mutation, collapse = ";")) %>% 
+    spread(columnname, mutation)
+  
+  variants.table <- full_join(variants.1, variants.2, by = "file")
 }else{
   variants.table <- data.frame(file=predictions.table$file, stringsAsFactors = F)
 }
@@ -332,10 +336,8 @@ report <-
   filter_at(vars(ends_with("_Prediction")), any_vars(. != "failed")) %>% 
   mutate_at(vars(starts_with("Mykrobe_")), funs(replace(., is.na(.), "No Mutation"))) %>% 
   full_join(anti_join(report, ., by = "file")) %>% 
-  select(columns) %>% 
-  rename(Moxifloxacin_Ofloxacin_R_mutations = Quinolones_R_mutations,
-         Moxifloxacin_Ofloxacin_Prediction = Quinolones_Prediction)
-  
+  select(columns)
+
 
 # Add in the parameters fed from Galaxy using named character vector
 report <- 
@@ -347,9 +349,9 @@ report <-
     Mykrobe_min_depth_default_5 = params["Mykrobe_min_depth_default_5"],
     Mykrobe_min_conf_default_10 = params["Mykrobe_min_conf_default_10"],
     LIMS_file = params["LIMS_file"],
-    LIMS_filename = params["LIMS_filename"]
+    LIMS_filename = params["Mutation_set_version"]
   )
-  
+
 
 #View(report)
 
