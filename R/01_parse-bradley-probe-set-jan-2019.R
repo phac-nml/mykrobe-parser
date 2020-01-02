@@ -323,8 +323,8 @@ report <-
   report %>% 
   mutate(
     Mykrobe_Workflow_Version = params["Mykrobe_Pipeline_Version"],
-    Mykrobe_min_depth_default_5 = params["Mykrobe_min_depth"],
-    Mykrobe_min_conf_default_10 = params["Mykrobe_min_conf"],
+    Mykrobe_min_depth = params["Mykrobe_min_depth"],
+    Mykrobe_min_conf = params["Mykrobe_min_conf"],
     Mutation_set_version= params["Mutation_set_version"]
   )
   
