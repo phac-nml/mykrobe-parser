@@ -118,7 +118,7 @@ option_list = list(
   make_option(c("-v", "--version"), 
               type="character", 
               default="", 
-              help="Mykrobe Workflow Version", 
+              help="Mykrobe Pipeline Version", 
               metavar="character"),
   make_option(c("-D", "--depth"), 
               type="integer", 
@@ -146,12 +146,12 @@ if (is.null(opt$file) & is.null(opt$dir)){
 }
 
 # Parameters to take from Galaxy/CL as args or however works best
-params <- c(opt$version,  # Mykrobe_Workflow_Version
+params <- c(opt$version,  # Mykrobe_Pipeline_Version
             opt$depth,  # Mykrobe_min_depth_default_5
             opt$conf,  # Mykrobe_min_conf_default_10
             opt$name)  # Mutation_set_version
 
-names(params) <- c("Mykrobe_Workflow_Version",
+names(params) <- c("Mykrobe_Pipeline_Version",
                    "Mykrobe_min_depth",
                    "Mykrobe_min_conf", 
                    "Mutation_set_version")
