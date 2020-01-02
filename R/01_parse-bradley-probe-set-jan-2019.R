@@ -146,20 +146,14 @@ if (is.null(opt$file) & is.null(opt$dir)){
 }
 
 # Parameters to take from Galaxy/CL as args or however works best
-params <- c("",  # Lims_Comment 
-            "",  # Lims_INTComment 
-            opt$version,  # Mykrobe_Workflow_Version
+params <- c(opt$version,  # Mykrobe_Workflow_Version
             opt$depth,  # Mykrobe_min_depth_default_5
             opt$conf,  # Mykrobe_min_conf_default_10
-            "",                             # LIMS_file - empty as it's an upload field in LIMS
             opt$name)  # Mutation_set_version
 
-names(params) <- c("Lims_Comment", 
-                   "Lims_INTComment",
-                   "Mykrobe_Workflow_Version",
+names(params) <- c("Mykrobe_Workflow_Version",
                    "Mykrobe_min_depth_default_5",
                    "Mykrobe_min_conf_default_10", 
-                   "LIMS_file", 
                    "Mutation_set_version")
 
 
@@ -197,14 +191,11 @@ columns <- c("file",
              "Mykrobe_Kanamycin_rrs",
              "Kanamycin_R_mutations",
              "Kanamycin_Prediction",
-             "Lims_Comment",
-             "Lims_INTComment",
              "Mykrobe_Workflow_Version",
-             "mykrobe_version",
+             "Mykrobe_version",
              "Mykrobe_Resistance_probe_set",
              "Mykrobe_min_depth_default_5",
              "Mykrobe_min_conf_default_10",
-             "LIMS_file",
              "Mutation_set_version")
 
 report <- setNames(data.frame(matrix("", ncol = length(columns), nrow = 1), stringsAsFactors = F), columns)
