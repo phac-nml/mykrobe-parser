@@ -133,7 +133,7 @@ option_list = list(
   make_option(c("-n", "--name"), 
               type="character", 
               default="", 
-              help="Name of the run", 
+              help="Mutation_set_version", 
               metavar="character")
 )
 
@@ -152,7 +152,7 @@ params <- c("",  # Lims_Comment
             opt$depth,  # Mykrobe_min_depth_default_5
             opt$conf,  # Mykrobe_min_conf_default_10
             "",                             # LIMS_file - empty as it's an upload field in LIMS
-            opt$name)  # LIMS_filename
+            opt$name)  # Mutation_set_version
 
 names(params) <- c("Lims_Comment", 
                    "Lims_INTComment",
@@ -160,7 +160,7 @@ names(params) <- c("Lims_Comment",
                    "Mykrobe_min_depth_default_5",
                    "Mykrobe_min_conf_default_10", 
                    "LIMS_file", 
-                   "LIMS_filename")
+                   "Mutation_set_version")
 
 
 # A default report in the order our LIMS requires
@@ -333,10 +333,7 @@ report <-
   filter_at(vars(ends_with("_Prediction")), any_vars(. != "failed")) %>% 
   mutate_at(vars(starts_with("Mykrobe_")), funs(replace(., is.na(.), "No Mutation"))) %>% 
   full_join(anti_join(report, ., by = "file")) %>% 
-  select(columns) %>% 
-  rename(Moxifloxacin_Ofloxacin_R_mutations = Quinolones_R_mutations,
-         Moxifloxacin_Ofloxacin_Prediction = Quinolones_Prediction)
-  
+  select(columns) 
 
 # Add in the parameters fed from Galaxy using named character vector
 report <- 
@@ -348,7 +345,7 @@ report <-
     Mykrobe_min_depth_default_5 = params["Mykrobe_min_depth_default_5"],
     Mykrobe_min_conf_default_10 = params["Mykrobe_min_conf_default_10"],
     LIMS_file = params["LIMS_file"],
-    LIMS_filename = params["LIMS_filename"]
+    LIMS_filename = params["Mutation_set_version"]
   )
   
 
