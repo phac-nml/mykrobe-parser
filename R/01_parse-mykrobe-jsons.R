@@ -152,7 +152,7 @@ params <- c("",  # Lims_Comment
             opt$depth,  # Mykrobe_min_depth_default_5
             opt$conf,  # Mykrobe_min_conf_default_10
             "",                             # LIMS_file - empty as it's an upload field in LIMS
-            opt$name)  # Mutation_set_version
+            opt$name)  # LIMS_filename
 
 names(params) <- c("Lims_Comment", 
                    "Lims_INTComment",
@@ -160,7 +160,7 @@ names(params) <- c("Lims_Comment",
                    "Mykrobe_min_depth_default_5",
                    "Mykrobe_min_conf_default_10", 
                    "LIMS_file", 
-                   "Mutation_set_version")
+                   "LIMS_filename")
 
 
 # A default report in the order our LIMS requires
@@ -185,12 +185,9 @@ columns <- c("file",
              "Mykrobe_rpsA",
              "Pyrazinamide_R_mutations",
              "Pyrazinamide_Prediction",
-             "Mykrobe_Ofloxacin_gyrA",
-             "Ofloxacin_R_mutations",
-             "Ofloxacin_Prediction",
-             "Mykrobe_Moxifloxacin_gyrA",
-             "Moxifloxacin_R_mutations",
-             "Moxifloxacin_Prediction",
+             "Mykrobe_gyrA",
+             "Quinolones_R_mutations",
+             "Quinolones_Prediction",
              "Mykrobe_rpsL",
              "Mykrobe_Streptomycin_rrs",
              "Mykrobe_Streptomycin_gid",
@@ -215,7 +212,7 @@ columns <- c("file",
              "Mykrobe_min_depth_default_5",
              "Mykrobe_min_conf_default_10",
              "LIMS_file",
-             "Mutation_set_version")
+             "LIMS_filename")
 
 report <- setNames(data.frame(matrix("", ncol = length(columns), nrow = 1), stringsAsFactors = F), columns)
 
@@ -225,8 +222,7 @@ all_drugs <- c("Isoniazid",
                "Rifampicin", 
                "Ethambutol", 
                "Pyrazinamide", 
-               "Moxifloxacin",
-               "Ofloxacin", 
+               "Moxifloxacin_Ofloxacin", 
                "Streptomycin",
                "Amikacin",
                "Capreomycin",
@@ -291,7 +287,7 @@ if (0 < predictions.table %>%
         mutate(variants = strsplit(variants, "__")) %>% # Split the mutations across rows (list first then split across rows)
         unnest(variants) %>% 
         separate(variants, c("gene", "mutation"), "_") %>% 
-        mutate(columnname = ifelse(gene %in% c("gyrA", "tlyA", "rrs", "eis", "gid"), # Check for columns that include the drug name or not and paste accordingly
+        mutate(columnname = ifelse(gene %in% c("tlyA", "rrs", "gid"), # Check for columns that include the drug name or not and paste accordingly
                                    paste("Mykrobe", drug, gene, sep = "_"),
                                    paste("Mykrobe", gene, sep = "_"))) %>% 
         # Extract out the mutation information with a regex that covers all potential genes
@@ -336,7 +332,9 @@ report <-
   filter_at(vars(ends_with("_Prediction")), any_vars(. != "failed")) %>% 
   mutate_at(vars(starts_with("Mykrobe_")), funs(replace(., is.na(.), "No Mutation"))) %>% 
   full_join(anti_join(report, ., by = "file")) %>% 
-  select(columns) 
+  select(columns) %>% 
+  rename(Moxifloxacin_Ofloxacin_R_mutations = Quinolones_R_mutations,
+         Moxifloxacin_Ofloxacin_Prediction = Quinolones_Prediction)
   
 
 # Add in the parameters fed from Galaxy using named character vector
@@ -349,7 +347,7 @@ report <-
     Mykrobe_min_depth_default_5 = params["Mykrobe_min_depth_default_5"],
     Mykrobe_min_conf_default_10 = params["Mykrobe_min_conf_default_10"],
     LIMS_file = params["LIMS_file"],
-    Mutation_set_version = params["Mutation_set_version"]
+    LIMS_filename = params["LIMS_filename"]
   )
   
 
