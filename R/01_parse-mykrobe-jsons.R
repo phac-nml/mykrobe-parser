@@ -171,7 +171,6 @@ columns <- c("file",
              "Mykrobe_katG",
              "Mykrobe_ahpC",
              "Mykrobe_inhA",
-             "Mykrobe_ndh",
              "Isoniazid_R_mutations",
              "Isoniazid_Prediction",
              "Mykrobe_rpoB",
@@ -182,7 +181,6 @@ columns <- c("file",
              "Ethambutol_R_mutations",
              "Ethambutol_Prediction",
              "Mykrobe_pncA",
-             "Mykrobe_rpsA",
              "Pyrazinamide_R_mutations",
              "Pyrazinamide_Prediction",
              "Mykrobe_Ofloxacin_gyrA",
@@ -200,7 +198,6 @@ columns <- c("file",
              "Amikacin_R_mutations",
              "Amikacin_Prediction",
              "Mykrobe_Capreomycin_rrs",
-             "Mykrobe_Capreomycin_tlyA",
              "Capreomycin_R_mutations",
              "Capreomycin_Prediction",
              "Mykrobe_Kanamycin_rrs",
@@ -277,6 +274,7 @@ if (0 < predictions.table %>%
     unlist(use.names = F) %>% 
     str_count("[R,r]") %>% 
     sum()){
+<<<<<<< HEAD
   
   # Multiple resistance mutations and confidence per drug in the X_R_mutations column
   # Actual protein changes in Mykrobe_X columns
@@ -314,6 +312,45 @@ if (0 < predictions.table %>%
     spread(columnname, mutation)
   
   variants.table <- full_join(variants.1, variants.2, by = "file")
+=======
+
+      # Multiple resistance mutations and confidence per drug in the X_R_mutations column
+      # Actual protein changes in Mykrobe_X columns
+      
+      variants.temp <- 
+        temp %>% 
+        select(file, drug, variants = `variants (gene:alt_depth:wt_depth:conf)`) %>% 
+        mutate(variants = replace(variants, variants == "", NA)) %>% # Make missing data consistent...
+        filter(!is.na(variants)) %>% # ...Then get rid of it
+        mutate(tempcols = paste(drug, "R_mutations", sep = "_")) %>% 
+        mutate(R_mutations = variants) %>% 
+        mutate(variants = strsplit(variants, "__")) %>% # Split the mutations across rows (list first then split across rows)
+        unnest(variants) %>% 
+        separate(variants, c("gene", "mutation"), "_") %>% 
+        mutate(columnname = ifelse(gene %in% c("gyrA", "rrs", "eis", "gid"), # Check for columns that include the drug name or not and paste accordingly
+                                   paste("Mykrobe", drug, gene, sep = "_"),
+                                   paste("Mykrobe", gene, sep = "_"))) %>% 
+        # Extract out the mutation information with a regex that covers all potential genes
+        # This regex looks for whatever is ahead of the first colon and after the last hyphen
+        mutate(mutation = str_match(mutation, "(.*)-.*:")[,2]) %>%
+        select(file, tempcols, R_mutations, columnname, mutation)
+      
+      # Split each kind of variants into its own temp table then merge
+      variants.1 <- 
+        variants.temp %>% 
+        select(file, tempcols, R_mutations) %>% 
+        distinct() %>% 
+        spread(tempcols, R_mutations)
+      
+      variants.2 <- 
+        variants.temp %>% 
+        select(file, columnname, mutation) %>% 
+        group_by(file, columnname) %>% 
+        summarise(mutation = paste(mutation, collapse = ";")) %>% 
+        spread(columnname, mutation)
+      
+      variants.table <- full_join(variants.1, variants.2, by = "file")
+>>>>>>> Update 01_parse-mykrobe-jsons.R
 }else{
   variants.table <- data.frame(file=predictions.table$file, stringsAsFactors = F)
 }
