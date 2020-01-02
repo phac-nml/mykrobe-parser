@@ -322,12 +322,9 @@ report <-
 report <- 
   report %>% 
   mutate(
-    Lims_Comment = params["Lims_Comment"],
-    Lims_INTComment = params["Lims_INTComment"],
     Mykrobe_Workflow_Version = params["Mykrobe_Workflow_Version"],
     Mykrobe_min_depth_default_5 = params["Mykrobe_min_depth_default_5"],
     Mykrobe_min_conf_default_10 = params["Mykrobe_min_conf_default_10"],
-    LIMS_file = params["LIMS_file"],
     LIMS_filename = params["Mutation_set_version"]
   )
   
