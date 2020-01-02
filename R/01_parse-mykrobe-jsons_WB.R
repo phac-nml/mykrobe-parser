@@ -213,7 +213,7 @@ columns <- c("file",
              "Mykrobe_min_depth_default_5",
              "Mykrobe_min_conf_default_10",
              "LIMS_file",
-             "LIMS_filename")
+             "Mutation_set_version")
 
 report <- setNames(data.frame(matrix("", ncol = length(columns), nrow = 1), stringsAsFactors = F), columns)
 
