@@ -325,7 +325,7 @@ report <-
     Mykrobe_Workflow_Version = params["Mykrobe_Workflow_Version"],
     Mykrobe_min_depth_default_5 = params["Mykrobe_min_depth_default_5"],
     Mykrobe_min_conf_default_10 = params["Mykrobe_min_conf_default_10"],
-    LIMS_filename = params["Mutation_set_version"]
+    Mutation_set_version= params["Mutation_set_version"]
   )
   
 
