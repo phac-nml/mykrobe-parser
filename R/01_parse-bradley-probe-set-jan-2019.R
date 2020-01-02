@@ -152,8 +152,8 @@ params <- c(opt$version,  # Mykrobe_Workflow_Version
             opt$name)  # Mutation_set_version
 
 names(params) <- c("Mykrobe_Workflow_Version",
-                   "Mykrobe_min_depth_default_5",
-                   "Mykrobe_min_conf_default_10", 
+                   "Mykrobe_min_depth",
+                   "Mykrobe_min_conf", 
                    "Mutation_set_version")
 
 
