@@ -344,7 +344,7 @@ report <-
 
 # Write some output
 # Report as is
-write.csv(report,file=paste("output-Bradley-",opt$reportfile,".csv",sep=""), row.names = F)
+write.csv(report,file=paste("output-Bradley070-",opt$reportfile,".csv",sep=""), row.names = F)
 print(paste("Writing Susceptibility report to CSV as output_",opt$reportfile,".csv",sep=""))
 
 # Select specific columns from temp and output them
@@ -360,7 +360,7 @@ temp %>%
          species_depth, 
          lineage_depth) %>%
   distinct() %>%
-  write.csv(file=paste("output-Bradley-",opt$speciationfile,".csv",sep=""), row.names = F)
+  write.csv(file=paste("output-Bradley070-",opt$speciationfile,".csv",sep=""), row.names = F)
 print(paste("Writing JSON data to CSV as output_",opt$speciationfile,".csv",sep=""))
 sink(NULL, type="message") # close the sink
 
