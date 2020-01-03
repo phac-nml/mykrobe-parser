@@ -130,12 +130,23 @@ option_list = list(
               default="", 
               help="Minimum genotype confidence for variant genotyping setting used to run Mykrobe", 
               metavar="integer"),
-  make_option(c("-n", "--name"), 
+ make_option(c("-n", "--name"), 
               type="character", 
               default="", 
-              help="Mutation_set_version", 
+              help="Name of the run", 
+              metavar="character"),
+  make_option(c("-r", "--reportfile"), 
+              type="character", 
+              default="report", 
+              help="File name for susceptibility report data", 
+              metavar="character"),			  
+  make_option(c("-s", "--speciationfile"), 
+              type="character", 
+              default="speciation_data", 
+              help="File name for speciation data", 
               metavar="character")
 )
+
 
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
@@ -333,8 +344,8 @@ report <-
 
 # Write some output
 # Report as is
-write.csv(report, "output-report.csv", row.names = F)
-print("Writing Susceptibility report to CSV as output-report.csv")
+write.csv(report,file=paste("output-Bradley-",opt$reportfile,".csv",sep=""), row.names = F)
+print(paste("Writing Susceptibility report to CSV as output_",opt$reportfile,".csv",sep=""))
 
 # Select specific columns from temp and output them
 temp %>% 
@@ -349,8 +360,8 @@ temp %>%
          species_depth, 
          lineage_depth) %>%
   distinct() %>%
-  write.csv("output-jsondata.csv", row.names = F)
-print("Writing JSON data to CSV as output-jsondata.csv")
+  write.csv(file=paste("output-Bradley-",opt$speciationfile,".csv",sep=""), row.names = F)
+print(paste("Writing JSON data to CSV as output_",opt$speciationfile,".csv",sep=""))
 sink(NULL, type="message") # close the sink
 
 quit()
