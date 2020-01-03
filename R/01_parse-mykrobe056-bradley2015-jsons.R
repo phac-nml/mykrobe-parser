@@ -16,6 +16,8 @@
 
 # Parsing JSONs from Mykrobe Predict into CSV reports
 # Take the JSON output from Mykrobe, rearrange, output for LIMS
+# Mykrobe version 0.5.6 with bradley-2015 panel 
+
 # Adrian Zetner
 # August 2018
 
