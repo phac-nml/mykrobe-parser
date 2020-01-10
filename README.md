@@ -25,7 +25,7 @@ specific language governing permissions and limitations under the License.
 ## Mykrobe Parser ##
 ---------------------
 
-Mykrobe Parser is an R Script that parses the *Mycobacterium tuberculosis* specific results of [Mykrobe](https://github.com/Mykrobe-tools/mykrobe) json files, seperates mutations into indivudal genetic regions and presents them in a tidy data format compatible with reporting.
+Mykrobe Parser is an R Script that parses the *Mycobacterium tuberculosis* specific results of [Mykrobe](https://github.com/Mykrobe-tools/mykrobe). It seperates mutations into indivudal genetic regions and presents them in a tidy data format compatible with reporting.
 
 Mykrobe Parser is compatible with [Mykrobe v0.7.0](https://anaconda.org/bioconda/mykrobe/files?version=0.7.0) and the "201901" panel.
 
