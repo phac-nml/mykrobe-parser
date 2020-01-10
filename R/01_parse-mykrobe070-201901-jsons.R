@@ -134,6 +134,16 @@ option_list = list(
               type="character", 
               default="", 
               help="Name of the run", 
+              metavar="character"),
+  make_option(c("-r", "--reportfile"), 
+              type="character", 
+              default="report", 
+              help="File name for susceptibility report data", 
+              metavar="character"),			  
+  make_option(c("-s", "--speciationfile"), 
+              type="character", 
+              default="speciation_data", 
+              help="File name for speciation data", 
               metavar="character")
 )
 
@@ -171,7 +181,6 @@ columns <- c("file",
              "Mykrobe_katG",
              "Mykrobe_ahpC",
              "Mykrobe_inhA",
-             "Mykrobe_ndh",
              "Isoniazid_R_mutations",
              "Isoniazid_Prediction",
              "Mykrobe_rpoB",
@@ -182,7 +191,6 @@ columns <- c("file",
              "Ethambutol_R_mutations",
              "Ethambutol_Prediction",
              "Mykrobe_pncA",
-             "Mykrobe_rpsA",
              "Pyrazinamide_R_mutations",
              "Pyrazinamide_Prediction",
              "Mykrobe_Ofloxacin_gyrA",
@@ -191,6 +199,9 @@ columns <- c("file",
              "Mykrobe_Moxifloxacin_gyrA",
              "Moxifloxacin_R_mutations",
              "Moxifloxacin_Prediction",
+             "Mykrobe_Ciprofloxacin_gyrA",
+             "Ciprofloxacin_R_mutations",
+             "Ciprofloxacin_Prediction",
              "Mykrobe_rpsL",
              "Mykrobe_Streptomycin_rrs",
              "Mykrobe_Streptomycin_gid",
@@ -200,7 +211,6 @@ columns <- c("file",
              "Amikacin_R_mutations",
              "Amikacin_Prediction",
              "Mykrobe_Capreomycin_rrs",
-             "Mykrobe_Capreomycin_tlyA",
              "Capreomycin_R_mutations",
              "Capreomycin_Prediction",
              "Mykrobe_Kanamycin_rrs",
@@ -291,7 +301,7 @@ if (0 < predictions.table %>%
         mutate(variants = strsplit(variants, "__")) %>% # Split the mutations across rows (list first then split across rows)
         unnest(variants) %>% 
         separate(variants, c("gene", "mutation"), "_") %>% 
-        mutate(columnname = ifelse(gene %in% c("gyrA", "tlyA", "rrs", "eis", "gid"), # Check for columns that include the drug name or not and paste accordingly
+        mutate(columnname = ifelse(gene %in% c("gyrA", "rrs", "eis", "gid"), # Check for columns that include the drug name or not and paste accordingly
                                    paste("Mykrobe", drug, gene, sep = "_"),
                                    paste("Mykrobe", gene, sep = "_"))) %>% 
         # Extract out the mutation information with a regex that covers all potential genes
@@ -357,8 +367,8 @@ report <-
 
 # Write some output
 # Report as is
-write.csv(report, "output-report.csv", row.names = F)
-print("Writing Susceptibility report to CSV as output-report.csv")
+write.csv(report,file=paste("output-",opt$reportfile,".csv",sep=""), row.names = F)
+print(paste("Writing Susceptibility report to CSV as output_",opt$reportfile,".csv",sep=""))
 
 # Select specific columns from temp and output them
 temp %>% 
@@ -373,8 +383,8 @@ temp %>%
          species_depth, 
          lineage_depth) %>%
   distinct() %>%
-  write.csv("output-jsondata.csv", row.names = F)
-print("Writing JSON data to CSV as output-jsondata.csv")
+  write.csv(file=paste("output-",opt$speciationfile,".csv",sep=""), row.names = F)
+print(paste("Writing JSON data to CSV as output_",opt$speciationfile,".csv",sep=""))
 sink(NULL, type="message") # close the sink
 
 quit()
