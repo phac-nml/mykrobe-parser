@@ -46,9 +46,9 @@ git clone https://github.com/phac-nml/mykrobe-parser.git
 
 **Use Conda to install required R dependancies**
 
-```sh
-cd mykrobe-parser
+The 
 
+```sh
 conda env create -f mykrobe_parser_environment.yml
 ```
 
@@ -117,12 +117,11 @@ Rscript PATH/TO/R/01_[Appropriate_Script_Version].R -d PATH/TO/Mykrobe_json_file
 
 #### Outputs ####
 
-Mykrobe Parser creates two files called "output-[panel&version]-report.csv" and "output-[panel&version]-speciation_data.csv".  
+Mykrobe Parser creates two files called "output-report.csv" and "output-speciation_data.csv" by default.  
 
-
-[output-[panel&version]-speciation_data.csv](/example_output/Mykrobe_Parser_output-jsondata.md)
-*  Stores Mykrobe's speciation data such as "phylo_group", "species", and "lineage" and their associated depths and percentages of coverage.  
-
-[output-[panel&version]-report.csv](example_output/Mykrobe_Parser_output-report.md)  
+output-report.csv
 *  Stores Mykrobe's antimicrobial resistance data. 
 *  The following columns are placeholders for internal data: "Lims_Comment", "Lims_INTComment", "LIMS_file".
+  
+output-speciation_data.csv
+*  Stores Mykrobe's speciation data such as "phylo_group", "species", and "lineage" and their associated depths and percentages of coverage.  
