@@ -109,7 +109,7 @@ These arguments encode text into the final output
 **Running Mykrobe Parser**
 
 ```sh
-Rscript PATH/TO/R/01_[Appropriate_Script_Version].R -d PATH/TO/Mykrobe_json_files
+Rscript PATH/TO/R/01_parse-mykrobe070-201901-jsons.R -d PATH/TO/Mykrobe_json_files
 ```
 
 #### Outputs ####
