@@ -74,9 +74,6 @@ To be compatible with Mykrobe Parser, Mykrobe must be run using the following ar
 
 ## Running Mykrobe Parser ##
 
-
-### Mykrobe Parser Parameters ###
-
 **Necessary arguments**
 
     -d 
@@ -109,7 +106,7 @@ These arguments encode text into the final output
     -s CHARACTER, --speciationfile
         Changes the name of the antimicrobial susceptibility report file. [Default = output-[panel&version]-speciation_data.csv]
 
-#### Running the Mykrobe Parser Script ####  
+** Running Mykrobe Parser **
 
 ```sh
 Rscript PATH/TO/R/01_[Appropriate_Script_Version].R -d PATH/TO/Mykrobe_json_files
