@@ -61,7 +61,7 @@ conda env create -f mykrobe_parser_installation.yml
 > [Hunt M, Bradley P, Lapierre SG, Heys S, Thomsit M, Hall MB, et al. Antibiotic resistance prediction for Mycobacterium tuberculosis from genome sequence data with Mykrobe. Wellcome Open Res. 2019;4: 191. doi:10.12688/wellcomeopenres.15603.1](https://wellcomeopenresearch.org/articles/4-191)  
 
 
-### Mykrobe Parameters ###
+**Mykrobe Parameters**
 
 To be compatible with Mykrobe Parser, Mykrobe must be run using the following arguments:
 
@@ -112,7 +112,7 @@ These arguments encode text into the final output
 Rscript PATH/TO/R/01_parse-mykrobe070-201901-jsons.R -d PATH/TO/Mykrobe_json_files
 ```
 
-#### Outputs ####
+**Outputs**
 
 Mykrobe Parser creates two files called "output-report.csv" and "output-speciation_data.csv" by default.  
 
