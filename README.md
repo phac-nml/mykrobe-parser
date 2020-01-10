@@ -36,9 +36,9 @@ Mykrobe Parser is compatible with [Mykrobe v0.7.0](https://anaconda.org/bioconda
 ## Installing Mykrobe Parser ##
 Dependancies:
 *  Conda
-*  Git
+*  Git (optional)
 
-Download or use git to clone this repository.
+Download this repository or use git to clone this repository.
 
 ```sh
 git clone https://github.com/phac-nml/mykrobe-parser.git
@@ -63,9 +63,7 @@ conda env create -f mykrobe_parser_environment.yml
 
 ### Mykrobe Parameters ###
 
-To be compatible with Mykrobe Parser, Mykrobe must be run using the follwing arguments:
-
-**Necessary arguments**
+To be compatible with Mykrobe Parser, Mykrobe must be run using the following arguments:
 
     --format json
         * Stores results a .json file instead of a text file. Mykrobe Parser only works with json files. 
