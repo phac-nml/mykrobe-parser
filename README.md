@@ -46,10 +46,10 @@ git clone https://github.com/phac-nml/mykrobe-parser.git
 
 **Use Conda to install required R dependancies**
 
-The mykrobe_parser_environment.yml file is found in the main directory of this repository.
+The mykrobe_parser_installation.yml file is found in the R directory of this repository.
 
 ```sh
-conda env create -f mykrobe_parser_environment.yml
+conda env create -f mykrobe_parser_installation.yml
 ```
 
 ##  Mykrobe ##
