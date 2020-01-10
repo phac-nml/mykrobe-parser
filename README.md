@@ -25,4 +25,106 @@ specific language governing permissions and limitations under the License.
 ## Mykrobe Parser ##
 ---------------------
 
-R Script to parse the results of mykrobe predictor and present them in a LIMS compatible format.
+Mykrobe Parser is an R Script that parses the *Mycobacterium tuberculosis* specific results of [Mykrobe](https://github.com/Mykrobe-tools/mykrobe) json files, seperates mutations into indivudal genetic regions and presents them in a tidy data format compatible with reporting.
+
+Mykrobe Parser is compatible with [Mykrobe v0.7.0](https://anaconda.org/bioconda/mykrobe/files?version=0.7.0) and the "201901" panel.
+
+**Notes**
+* Samples that Mykrobe detects non-tuberculous mycobacteria in are removed for quality control purposes.
+* If prediction for one gene fails in Mykrobe, Mykrobe parser will set all "[antimicrobial]_prediction" columns to "failed" and all genetic regions to "NA".
+
+## Installing Mykrobe Parser ##
+Dependancies:
+*  Conda
+*  Git
+
+Download or use git to clone this repository.
+
+```sh
+git clone https://github.com/phac-nml/mykrobe-parser.git
+```
+
+**Use Conda to install required R dependancies**
+
+```sh
+cd mykrobe-parser
+
+conda env create -f mykrobe_parser_environment.yml
+```
+
+##  Mykrobe ##
+
+[Mykrobe](https://github.com/Mykrobe-tools/mykrobe) is an open-sourced program the can predict antimicrobial resistance from *Staphylococcus aureus* and *Mycobacterium tuberculosis*.
+
+> [Bradley P, Gordon NC, Walker TM, Dunn L, Heys S, Huang B, et al. Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis. Nat Commun. 2015;6: 10063. doi:10.1038/ncomms10063](http://www.nature.com/ncomms/2015/151221/ncomms10063/full/ncomms10063.html)  
+
+> [Hunt M, Bradley P, Lapierre SG, Heys S, Thomsit M, Hall MB, et al. Antibiotic resistance prediction for Mycobacterium tuberculosis from genome sequence data with Mykrobe. Wellcome Open Res. 2019;4: 191. doi:10.12688/wellcomeopenres.15603.1](https://wellcomeopenresearch.org/articles/4-191)  
+
+
+### Mykrobe Parameters ###
+
+To be compatible with Mykrobe Parser, Mykrobe must be run using the follwing arguments:
+
+**Necessary arguments**
+
+    --format json
+        * Stores results a .json file instead of a text file. Mykrobe Parser only works with json files. 
+
+    --panel 201901
+        * Uses the "201901" panel for resistance prediction. This is the only panel currently compatabile with Mykrobe Parser.
+
+
+## Running Mykrobe Parser ##
+
+
+### Mykrobe Parser Parameters ###
+
+**Necessary arguments**
+
+    -d 
+        (directory where the Mykrobe json files are stored)
+
+    or
+
+    -f 
+        (a file path, or list of file paths to Mykrobe json files -eg. "~mykrobe-parser/data/FILE1.json,~mykrobe-parser/data/FILE2.json)
+
+**Optional arguments**
+
+These arguments encode text into the final output  
+
+     -v CHARACTER , --version 
+         Stores text to the "Mykrobe_Workflow_Version" column. This is meant to store the pipeline or Galaxy Workflow version.  
+
+    -D INTEGER, --depth  
+        Stores the '--min_depth' argument used to run Mykrobe [default= 5])  
+
+    -c INTEGER, --conf
+        Stores the '--min_variant_conf' argument used to run Mykrobe [default= 10]  
+
+    -n CHARACTER, --name
+        Stores text to the "Mutation_set_version". This is meant to store a simple version number for the Mykrobe_Resistance_probe_set (instead of tb-hunt-probe-set-jan-03-2019.fasta.gz).
+    
+    -r CHARACTER, --reportfile
+        Changes the name of the antimicrobial susceptibility report file. [Default = output-[panel&version]-report.csv]
+
+    -s CHARACTER, --speciationfile
+        Changes the name of the antimicrobial susceptibility report file. [Default = output-[panel&version]-speciation_data.csv]
+
+#### Running the Mykrobe Parser Script ####  
+
+```sh
+Rscript PATH/TO/R/01_[Appropriate_Script_Version].R -d PATH/TO/Mykrobe_json_files
+```
+
+#### Outputs ####
+
+Mykrobe Parser creates two files called "output-[panel&version]-report.csv" and "output-[panel&version]-speciation_data.csv".  
+
+
+[output-[panel&version]-speciation_data.csv](/example_output/Mykrobe_Parser_output-jsondata.md)
+*  Stores Mykrobe's speciation data such as "phylo_group", "species", and "lineage" and their associated depths and percentages of coverage.  
+
+[output-[panel&version]-report.csv](example_output/Mykrobe_Parser_output-report.md)  
+*  Stores Mykrobe's antimicrobial resistance data. 
+*  The following columns are placeholders for internal data: "Lims_Comment", "Lims_INTComment", "LIMS_file".
