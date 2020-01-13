@@ -108,6 +108,12 @@ These arguments encode text into the final output
 
 **Running Mykrobe Parser**
 
+Depending on the version of Mykrobe and the panel set a different script will need to be used. Those scripts are named as follows: ```01_parse-[Mykrobe version]-[panel]-jsons.R```
+
+Please view the [RELEASES](https://github.com/phac-nml/mykrobe-parser/releases) panel or switch branches to access the backwards compatible scripts.
+
+Eg. To run the script on mykrobe v0.7.0 output with the 201901 panel use the following command: 
+
 ```sh
 Rscript PATH/TO/R/01_parse-mykrobe070-201901-jsons.R -d PATH/TO/Mykrobe_json_files
 ```
