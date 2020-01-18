@@ -287,7 +287,6 @@ if (0 < predictions.table %>%
     unlist(use.names = F) %>% 
     str_count("[R,r]") %>% 
     sum()){
-<<<<<<< HEAD
   
   # Multiple resistance mutations and confidence per drug in the X_R_mutations column
   # Actual protein changes in Mykrobe_X columns
@@ -325,7 +324,6 @@ if (0 < predictions.table %>%
     spread(columnname, mutation)
   
   variants.table <- full_join(variants.1, variants.2, by = "file")
-=======
 
       # Multiple resistance mutations and confidence per drug in the X_R_mutations column
       # Actual protein changes in Mykrobe_X columns
@@ -363,7 +361,7 @@ if (0 < predictions.table %>%
         spread(columnname, mutation)
       
       variants.table <- full_join(variants.1, variants.2, by = "file")
->>>>>>> Update 01_parse-mykrobe-jsons.R
+
 }else{
   variants.table <- data.frame(file=predictions.table$file, stringsAsFactors = F)
 }
