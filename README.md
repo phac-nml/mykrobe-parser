@@ -27,7 +27,7 @@ specific language governing permissions and limitations under the License.
 
 Mykrobe Parser is an R Script that parses the *Mycobacterium tuberculosis* specific results of [Mykrobe](https://github.com/Mykrobe-tools/mykrobe). It seperates mutations into indivudal genetic regions and presents them in a tidy data format compatible with reporting.
 
-Mykrobe Parser is compatible with [Mykrobe v0.7.0](https://anaconda.org/bioconda/mykrobe/files?version=0.7.0) and the "201901" panel.
+Mykrobe Parser is compatible with [Mykrobe v0.7.0](https://anaconda.org/bioconda/mykrobe/files?version=0.7.0) and the "201901" / "202010" panels.
 
 **Notes**
 * Samples that Mykrobe detects non-tuberculous mycobacteria in are removed for quality control purposes.
@@ -69,7 +69,12 @@ To be compatible with Mykrobe Parser, Mykrobe must be run using the following ar
         * Stores results a .json file instead of a text file. Mykrobe Parser only works with json files. 
 
     --panel 201901
-        * Uses the "201901" panel for resistance prediction. This is the only panel currently compatabile with Mykrobe Parser.
+        * Uses the "201901" panel for resistance prediction
+
+    or
+
+    --panel 202010
+        * Uses the "202010" panel for resistance prediction
 
 
 ## Running Mykrobe Parser ##
@@ -85,6 +90,14 @@ To be compatible with Mykrobe Parser, Mykrobe must be run using the following ar
         (a file path, or list of file paths to Mykrobe json files -eg. "~mykrobe-parser/data/FILE1.json,~mykrobe-parser/data/FILE2.json)
 
 **Optional arguments**
+
+Choose a panel with this option, defaults to 201901 if not supplied
+
+    -p 2019
+
+    or
+
+    -p 2020
 
 These arguments encode text into the final output  
 
@@ -108,15 +121,22 @@ These arguments encode text into the final output
 
 **Running Mykrobe Parser**
 
-Depending on the version of Mykrobe and the panel set a different script will need to be used. Those scripts are named as follows: ```01_parse-[Mykrobe version]-[panel]-jsons.R```
+Run Mykrobe Parser with the following script: ```mykrobe_parser.R```
 
-Please view the [RELEASES](https://github.com/phac-nml/mykrobe-parser/releases) panel or switch branches to access the backwards compatible scripts.
+Please view the [RELEASES](https://github.com/phac-nml/mykrobe-parser/releases) panel to access the backwards compatible scripts.
 
 Eg. To run the script on mykrobe v0.7.0 output with the 201901 panel use the following command: 
 
 ```sh
-Rscript PATH/TO/R/01_parse-mykrobe070-201901-jsons.R -d PATH/TO/Mykrobe_json_files
+Rscript PATH/TO/R/mykrobe_parser.R -d PATH/TO/Mykrobe_json_files
 ```
+
+Eg. To run the script on mykrobe v0.7.0 output with the 202010 panel use the following command: 
+
+```sh
+Rscript PATH/TO/R/mykrobe_parser.R -p 2020 -d PATH/TO/Mykrobe_json_files
+```
+
 
 **Outputs**
 
@@ -126,5 +146,5 @@ output-report.csv
 *  Stores Mykrobe's antimicrobial resistance data. 
 *  The following columns are placeholders for internal data: "Lims_Comment", "Lims_INTComment", "LIMS_file".
   
-output-speciation_data.csv
+output-jsondata.csv
 *  Stores Mykrobe's speciation data such as "phylo_group", "species", and "lineage" and their associated depths and percentages of coverage.  
